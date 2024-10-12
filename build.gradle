@@ -56,9 +56,13 @@ tasks.named('test') {
 
 tasks.register('copyYML', Copy) {
 	from 'config-secret-d108'
-	include "alert-dev.yml"  // 원하는 YML 파일만 복사
-	into 'src/main/resources'  // 파일을 복사할 위치
-	rename 'alert-dev.yml', 'application.yml'  // 파일명 변경
+
+	include "alert-dev.yml"
+	rename('alert-dev.yml', 'application.yml')
+
+	include "firebase-service-account.json"
+
+	into 'src/main/resources'
 }
 
 tasks.named('build') {
