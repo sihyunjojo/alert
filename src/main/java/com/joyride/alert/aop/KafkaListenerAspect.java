@@ -1,6 +1,6 @@
 package com.joyride.alert.aop;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
+import com.joyride.alert.exception.NotificationSendException;
 import com.joyride.alert.util.TopicUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +30,15 @@ public class KafkaListenerAspect {
         if (args[0] instanceof ConsumerRecord) {
             ConsumerRecord<String, String> consumerRecord = (ConsumerRecord<String, String>) args[0];
             String token = topicUtil.extractTokenFromConsumerRecord(consumerRecord);
-            String type = topicUtil.extractTypeFromConsumerRecord(consumerRecord);
 
             try {
                 // 원래 Kafka 리스너 메서드를 실행 (notificationService.sendUpdateNotification 포함)
                 return joinPoint.proceed();
-            } catch (FirebaseMessagingException e) {
-                // FCM 메시지 전송 중 예외 처리
-                log.error("FCM 메시지 전송에 실패했습니다. 토큰: {}, 유형: {}, 오류: {}", token, type, e.getMessage());
-                // 예외 처리: 재시도, 토큰 무효화 등의 로직 추가 가능
-                handleFirebaseMessagingException(joinPoint, token, e);
-                return null; // 실패 시 null 반환 또는 다른 처리 가능
+            } catch (NotificationSendException e) {
+                // 새로 추가된 예외 처리
+                log.error("알림 전송 실패: {}", e.getMessage(), e);
+                handleNotificationSendException(joinPoint, token, e);
+                return null;
             }
             catch (DeserializationException e) {
                 handleDeserializationException(joinPoint, e);
@@ -62,7 +60,7 @@ public class KafkaListenerAspect {
     }
 
 
-    private void handleFirebaseMessagingException(ProceedingJoinPoint joinPoint, String token, FirebaseMessagingException e) {
+    private void handleNotificationSendException(ProceedingJoinPoint joinPoint, String token, NotificationSendException e) {
         String methodName = joinPoint.getSignature().getName();
 
         // 예외에 따라 분기 처리할 수 있음
