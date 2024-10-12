@@ -286,3 +286,4 @@ gradle-app.setting
 
 # resourece
 application.yml
+config-secret-d108/**
