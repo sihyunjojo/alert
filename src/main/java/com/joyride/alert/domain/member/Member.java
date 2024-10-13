@@ -1,5 +1,6 @@
-package com.joyride.alert;
+package com.joyride.alert.domain.member;
 
+import com.joyride.alert.domain.alert.Alert;
 import jakarta.persistence.*;
 import lombok.*;
 

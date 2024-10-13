@@ -1,13 +1,16 @@
-package com.joyride.alert;
+package com.joyride.alert.domain.alert;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.joyride.alert.enums.Status;
+import com.joyride.alert.domain.member.Member;
+import com.joyride.alert.domain.member.MemberRepository;
+import com.joyride.alert.domain.NotificationService;
+import com.joyride.alert.domain.alert.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.joyride.alert.Alert.createPendingAlert;
+import static com.joyride.alert.domain.alert.Alert.createPendingAlert;
 
 @Service
 @RequiredArgsConstructor

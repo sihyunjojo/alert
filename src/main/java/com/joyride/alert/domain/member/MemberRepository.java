@@ -1,4 +1,4 @@
-package com.joyride.alert;
+package com.joyride.alert.domain.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

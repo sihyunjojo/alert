@@ -1,4 +1,4 @@
-package com.joyride.alert.config;
+package com.joyride.alert.config.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

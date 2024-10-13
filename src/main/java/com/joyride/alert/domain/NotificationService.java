@@ -1,4 +1,4 @@
-package com.joyride.alert;
+package com.joyride.alert.domain;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;

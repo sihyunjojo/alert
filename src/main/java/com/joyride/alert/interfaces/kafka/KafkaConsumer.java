@@ -1,8 +1,8 @@
-package com.joyride.alert.kafka;
+package com.joyride.alert.interfaces.kafka;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.joyride.alert.AlertService;
-import com.joyride.alert.exception.NotificationSendException;
+import com.joyride.alert.domain.alert.AlertService;
+import com.joyride.alert.util.exception.NotificationSendException;
 import com.joyride.alert.util.LogUtil;
 import com.joyride.alert.util.TopicUtil;
 import lombok.RequiredArgsConstructor;

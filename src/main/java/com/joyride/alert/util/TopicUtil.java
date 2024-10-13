@@ -1,7 +1,5 @@
 package com.joyride.alert.util;
 
-import com.joyride.alert.Member;
-import com.joyride.alert.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.stereotype.Component;

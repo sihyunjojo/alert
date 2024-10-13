@@ -1,4 +1,4 @@
-package com.joyride.alert.config;
+package com.joyride.alert.config.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

@@ -1,6 +1,6 @@
-package com.joyride.alert.aop;
+package com.joyride.alert.config.aop;
 
-import com.joyride.alert.exception.NotificationSendException;
+import com.joyride.alert.util.exception.NotificationSendException;
 import com.joyride.alert.util.TopicUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,7 @@
-package com.joyride.alert;
+package com.joyride.alert.domain.alert;
 
-import com.joyride.alert.enums.Status;
+import com.joyride.alert.domain.member.Member;
+import com.joyride.alert.domain.alert.enums.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
