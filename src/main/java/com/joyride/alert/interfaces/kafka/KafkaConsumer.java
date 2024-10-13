@@ -46,9 +46,8 @@ public class KafkaConsumer {
 
         //해당 비지니스 로직 처리 후 커밋로직 작성
         String areaName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "areaName");
-        Long memberId = topicUtil.extractMemberIdFromConsumerRecord(consumerRecord);
         try {
-            alertService.sendHotAreaAlert(memberId, areaName);
+            alertService.sendHotAreaAlert(areaName);
         } catch (FirebaseMessagingException e) {
             throw new NotificationSendException("인기 상권 알림 전송 실패", e);
         }
@@ -65,9 +64,8 @@ public class KafkaConsumer {
 
         String boardName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "boardName");
         String postName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "postName");
-        Long memberId = topicUtil.extractMemberIdFromConsumerRecord(consumerRecord);
         try {
-            alertService.sendHotPostAlert(memberId, postName, boardName);
+            alertService.sendHotPostAlert(postName, boardName);
         } catch (FirebaseMessagingException e) {
             throw new NotificationSendException("인기 게시글 알림 전송 실패", e);
         }
