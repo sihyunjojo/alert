@@ -1,0 +1,97 @@
+# 에러 로그에 따르면 kafka-2와 kafka-3에서 발생한 문제는 process.roles 설정과 관련이 있습니다.
+# process.roles가 broker로만 설정되어 있을 경우, 해당 노드는 컨트롤러 쿼럼에 포함되면 안 된다는 오류입니다.
+
+networks:
+  default:
+    name: kafka_network
+    external: false
+
+volumes:
+  Kafka01:
+    driver: local
+  Kafka02:
+    driver: local
+  Kafka03:
+    driver: local
+
+services:
+  kafka-1:
+    image: docker.io/bitnami/kafka:3.8
+    hostname: kafka-1
+    container_name: kafka-1
+    ports:
+      - "29092:9092"
+    volumes:
+      - "Kafka01:/bitnami/kafka"
+    environment:
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_HEAP_OPTS: "-Xmx1G -Xms1G"
+      KAFKA_CFG_BROKER_ID: 1
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_KRAFT_CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:8085,2@kafka-2:8085,3@kafka-3:8085'
+      KAFKA_CFG_PROCESS_ROLES: 'controller'  # 이 노드는 컨트롤러로만 동작
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_LISTENERS: 'CONTROLLER://0.0.0.0:8085'  # CONTROLLER 리스너만 설정
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CLIENT_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_CFG_GROUP_INITIAL_REBALANCE_DELAY_MS: 2
+      KAFKA_LOG_DIR: '/tmp/kraft-combined-logs'
+
+  kafka-2:
+    image: docker.io/bitnami/kafka:3.8
+    hostname: kafka-2
+    container_name: kafka-2
+    ports:
+      - "39092:9092"
+    volumes:
+      - "Kafka02:/bitnami/kafka"
+    environment:
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_HEAP_OPTS: "-Xmx1G -Xms1G"
+      KAFKA_CFG_NODE_ID: 2
+      KAFKA_KRAFT_CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'  # 필수 설정이므로 추가 (필요하지만 컨트롤러 역할 수행 X)
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:8085'  # 2@kafka-2 항목 제거
+      KAFKA_CFG_PROCESS_ROLES: 'broker'  # 이 노드는 broker로만 동작
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_LISTENERS: 'PLAINTEXT://0.0.0.0:19092'
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:19092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT'  # CONTROLLER 추가
+      KAFKA_CLIENT_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_CFG_GROUP_INITIAL_REBALANCE_DELAY_MS: 2
+      KAFKA_LOG_DIR: '/tmp/kraft-combined-logs'
+
+  kafka-3:
+    image: docker.io/bitnami/kafka:3.8
+    hostname: kafka-3
+    container_name: kafka-3
+    ports:
+      - "49092:9092"
+    volumes:
+      - "Kafka03:/bitnami/kafka"
+    environment:
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'  # 필수 설정이므로 추가 (필요하지만 컨트롤러 역할 수행 X)
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_HEAP_OPTS: "-Xmx1G -Xms1G"
+      KAFKA_CFG_NODE_ID: 3
+      KAFKA_KRAFT_CLUSTER_ID: '4L6g3nShT-eMCtK--X86sw'
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@kafka-1:8085'  # 2@kafka-3 항목 제거
+      KAFKA_CFG_PROCESS_ROLES: 'broker'  # 이 노드도 broker로만 동작
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CFG_LISTENERS: 'PLAINTEXT://0.0.0.0:19092'
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:19092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: 'PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT'  # CONTROLLER 추가
+      KAFKA_CLIENT_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_CFG_GROUP_INITIAL_REBALANCE_DELAY_MS: 2
+      KAFKA_LOG_DIR: '/tmp/kraft-combined-logs'
