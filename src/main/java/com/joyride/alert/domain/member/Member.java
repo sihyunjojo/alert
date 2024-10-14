@@ -4,6 +4,8 @@ import com.joyride.alert.domain.alert.Alert;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -22,11 +24,11 @@ public class Member{
     private String email;
 
     @Column(unique = true)
-    private String FcmToken;
+    private String fcmToken;
 
     private boolean isOnline;
 
-    @OneToOne
-    private Alert alert;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alert> alert;
 }
 

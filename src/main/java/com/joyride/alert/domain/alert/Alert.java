@@ -2,9 +2,7 @@ package com.joyride.alert.domain.alert;
 
 import com.joyride.alert.domain.member.Member;
 import com.joyride.alert.domain.alert.enums.Status;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,15 +13,19 @@ import lombok.Setter;
 public class Alert {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
     private String body;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
     public Alert(String title, String body, Status status, Member member) {
