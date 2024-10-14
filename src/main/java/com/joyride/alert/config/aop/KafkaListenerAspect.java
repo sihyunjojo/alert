@@ -28,16 +28,13 @@ public class KafkaListenerAspect {
 
         // KafkaListener 메서드의 인자 순서에 맞게 token과 type을 추출
         if (args[0] instanceof ConsumerRecord) {
-            ConsumerRecord<String, String> consumerRecord = (ConsumerRecord<String, String>) args[0];
-            Long memberId = topicUtil.extractMemberIdFromConsumerRecord(consumerRecord);
-
             try {
                 // 원래 Kafka 리스너 메서드를 실행 (notificationService.sendUpdateNotification 포함)
                 return joinPoint.proceed();
             } catch (NotificationSendException e) {
                 // 새로 추가된 예외 처리
                 log.error("알림 전송 실패: {}", e.getMessage(), e);
-                handleNotificationSendException(joinPoint, memberId, e);
+                handleNotificationSendException(joinPoint, e);
                 return null;
             }
             catch (DeserializationException e) {
@@ -59,13 +56,12 @@ public class KafkaListenerAspect {
         }
     }
 
-
-    private void handleNotificationSendException(ProceedingJoinPoint joinPoint, Long memberId, NotificationSendException e) {
+    private void handleNotificationSendException(ProceedingJoinPoint joinPoint, NotificationSendException e) {
         String methodName = joinPoint.getSignature().getName();
 
         // 예외에 따라 분기 처리할 수 있음
         if (e.getMessage().contains("InvalidToken")) {
-            log.warn("{} 메서드에서 잘못된 토큰으로 인해 memberId: {} 에 대한 메시지 전송 실패", methodName, memberId);
+            log.warn("{} 메서드에서 잘못된 토큰으로 인해 대한 메시지 전송 실패", methodName);
             // 이 경우 토큰 무효화 처리 로직을 추가하거나 알림을 건너뛸 수 있음
         } else {
             log.error("{} 메서드에서 Firebase 메시지 전송 오류: {}", methodName, e.getMessage());
