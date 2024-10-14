@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LogUtil {
 
-    public static void printLog(ConsumerRecord<String, String> consumerRecord, Long offset) {
-        log.info("Consumer Data = {}, Offset = {}, Header OffSet = {}, Partition = {}"
-                , consumerRecord.value(), consumerRecord.offset(), offset, consumerRecord.partition());
+    public static void printLog(ConsumerRecord<String, String> consumerRecord
+    ) {
+        log.info("Consumer Data = {},Header OffSet = {}, Partition = {}"
+                , consumerRecord.value(), consumerRecord.offset(), consumerRecord.partition());
     }
 }
