@@ -19,15 +19,19 @@ public class TaskExecutorConfig {
 
         // 코어 스레드 풀의 크기를 설정합니다.
         // 최소 3개의 스레드가 항상 실행될 수 있도록 설정합니다.
-        executor.setCorePoolSize(3);
-
+//        executor.setCorePoolSize(3);
+        executor.setCorePoolSize(20);  // 기본 스레드 풀 크기를 더 증가
         // 최대 스레드 풀의 크기를 설정합니다.
         // 동시 실행되는 최대 스레드 수를 10개로 제한합니다.
-        executor.setMaxPoolSize(10);
-
+//        executor.setMaxPoolSize(10);
+        executor.setMaxPoolSize(50);   // 최대 스레드 풀 크기를 더 증가
         // 작업 대기열의 크기를 설정합니다.
         // 대기할 수 있는 최대 작업 수는 25개로 설정합니다.
-        executor.setQueueCapacity(25);
+//        executor.setQueueCapacity(25);
+        executor.setQueueCapacity(1000); // 큐 용량 증가
+
+
+
 
         // 스레드의 이름에 붙을 접두사를 설정합니다.
         // 생성된 스레드 이름이 "KafkaListener-1", "KafkaListener-2" 등으로 표시됩니다.
