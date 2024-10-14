@@ -37,31 +37,37 @@ public class KafkaConsumer {
      * consumerRecord.offset(): 해당 메시지가 파티션 내에서 차지하는 고유한 위치를 나타내는 오프셋 값.
      * consumerRecord.partition(): 메시지가 저장된 Kafka 파티션 번호.
      */
-    @KafkaListener(topics = "hot-board-topic", groupId = "notification-group")
-    public void listenHotAreaTopic(ConsumerRecord<String, String> consumerRecord, @Header(KafkaHeaders.OFFSET) Long offset
+
+//    @KafkaListener(topics = "hot-area-topic", groupId = "notification-group")
+    @KafkaListener(topics = "hot-area-topic", groupId = "notification-group", containerFactory = "factory")
+    public void listenHotAreaTopic(ConsumerRecord<String, String> consumerRecord
+//                                   ,@Header(KafkaHeaders.OFFSET) Long offset
             , Acknowledgment acknowledgment // 수동 커밋 관리 위해 Acknowledgment 사용
 //            , Consumer <?, ?> consumer // 자동 커밋 시 사용.
     ) {
-        printLog(consumerRecord, offset);
+        printLog(consumerRecord);
 
         //해당 비지니스 로직 처리 후 커밋로직 작성
         String areaName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "areaName");
         try {
             alertService.sendHotAreaAlert(areaName);
+            //처리 후 커밋
+            acknowledgment.acknowledge();
         } catch (FirebaseMessagingException e) {
             throw new NotificationSendException("인기 상권 알림 전송 실패", e);
+            // 여기에 예외 처리 로직 추가 (예: 재시도, Dead Letter Queue 등)
         }
 
-        //처리 후 커밋
-        acknowledgment.acknowledge();
     }
 
-    @KafkaListener(topics = "hot-post-topic", groupId = "notification-group")
+//    @KafkaListener(topics = "hot-post-topic", groupId = "notification-group")
+    @KafkaListener(topics = "hot-post-topic", groupId = "notification-group", containerFactory = "factory")
     public void listenHotPostTopic(ConsumerRecord<String, String> consumerRecord, @Header(KafkaHeaders.OFFSET) Long offset
             , Acknowledgment acknowledgment // 수동 커밋 관리 위해 Acknowledgment 사용
     ) {
-        printLog(consumerRecord, offset);
+//        printLog(consumerRecord, offset);
 
+        printLog(consumerRecord);
         String boardName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "boardName");
         String postName = topicUtil.extractValueByKeyFromConsumerRecord(consumerRecord, "postName");
         try {
@@ -74,12 +80,14 @@ public class KafkaConsumer {
         acknowledgment.acknowledge();
     }
 
-    @KafkaListener(topics = "pending-notification-topic", groupId = "notification-group")
+//    @KafkaListener(topics = "pending-notification-topic", groupId = "notification-group")
+    @KafkaListener(topics = "pending-notification-topic", groupId = "notification-group", containerFactory = "factory")
     public void listenPendingNotificationTopic(ConsumerRecord<String, String> consumerRecord, @Header(KafkaHeaders.OFFSET) Long offset
             , Acknowledgment acknowledgment // 수동 커밋 관리 위해 Acknowledgment 사용
 //            , Consumer <?, ?> consumer // 자동 커밋 시 사용.
     ) {
-        printLog(consumerRecord, offset);
+//        printLog(consumerRecord, offset);
+        printLog(consumerRecord);
 
         //해당 비지니스 로직 처리 후 커밋로직 작성
         Long memberId = topicUtil.extractMemberIdFromConsumerRecord(consumerRecord);
